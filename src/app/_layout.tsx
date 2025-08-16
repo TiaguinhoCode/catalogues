@@ -1,5 +1,9 @@
-import { Stack } from "expo-router";
+// css
+import "../styles/global.css";
+
+// Expo
+import { Slot } from "expo-router";
 
 export default function RootLayout() {
-  return <Stack />;
+  return <Slot />;
 }
