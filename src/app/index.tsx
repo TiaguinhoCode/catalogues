@@ -99,7 +99,7 @@ export default function WelcomeScreen() {
                 accessibilityRole="link"
                 accessibilityLabel="Ver catálogos de produtos"
                 onPress={() => {
-                  // TODO: navegação
+                  router.push("/Catalog");
                 }}
                 className="mt-4 items-center"
               >
