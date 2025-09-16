@@ -31,7 +31,10 @@ export default function SignIn() {
       end={{ x: 0, y: 1 }}
       className="flex-1"
     >
-      <SafeAreaView edges={["top", "bottom"]} className="flex-1">
+      <SafeAreaView
+        className="flex-1"
+        edges={["top", "bottom", "left", "right"]}
+      >
         <Animated.View style={{ flex: 1, opacity: fade }}>
           <Animatable.View
             animation="fadeInDown"

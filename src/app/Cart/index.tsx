@@ -1,8 +1,23 @@
+// Components
 import Footer from "@/components/Footer";
+import Header from "@/components/Header";
+
+// Providers
 import { useCart } from "@/provider/CartContext";
+
+// Icons
 import { Feather } from "@expo/vector-icons";
+
+// Bibliotecas
 import React from "react";
-import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
+import {
+  FlatList,
+  Image,
+  Linking,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 export default function CartScreen() {
   const { cart, removeFromCart, clearCart } = useCart();
@@ -12,8 +27,8 @@ export default function CartScreen() {
   const renderItem = ({ item }: { item: any }) => (
     <View className="flex-row items-center bg-white rounded-2xl p-4 mt-4 shadow">
       <Image
-        source={item.image}
-        className="w-20 h-20 rounded-xl"
+        source={{ uri: item.url_imagem }}
+        className="w-[70px] h-[80px] rounded-xl"
         resizeMode="cover"
       />
 
@@ -33,20 +48,11 @@ export default function CartScreen() {
     </View>
   );
 
+  const phoneNumber = "+5585999063736";
+
   return (
     <View className="flex-1 bg-gray-50">
-      {/* Header */}
-      <View className="flex-row justify-between items-center p-5 bg-white shadow-md">
-        <Text className="text-3xl font-bold text-gray-800">Carrinho</Text>
-        {cart.length > 0 && (
-          <TouchableOpacity
-            onPress={clearCart}
-            className="flex-row items-center justify-center bg-red-500 p-2 w-28 rounded-full"
-          >
-            <Text className="text-white font-semibold">Apagar tudo</Text>
-          </TouchableOpacity>
-        )}
-      </View>
+      <Header />
 
       {cart.length === 0 ? (
         <Text className="text-gray-500 text-center mt-8 text-lg">
@@ -65,7 +71,7 @@ export default function CartScreen() {
             showsVerticalScrollIndicator={false}
           />
 
-          {/* Footer com Total e Finalizar Compra */}
+          {/* Footer with total and final purchase */}
           <View className="absolute bottom-16 left-0 right-0 bg-white px-6 py-4 border-t border-gray-200">
             <View className="flex-row justify-between items-center mb-4">
               <Text className="text-gray-800 font-bold text-lg">Total</Text>
@@ -74,7 +80,34 @@ export default function CartScreen() {
               </Text>
             </View>
 
-            <TouchableOpacity className="bg-blue-500 py-3 rounded-full items-center">
+            {/* Complete the Purchase */}
+            <TouchableOpacity
+              className="bg-blue-500 py-3 rounded-full items-center"
+              onPress={() => {
+                // Show cart product list
+                const produtos = cart
+                  .map(
+                    (item) =>
+                      `• ${item.name} (Qtd: ${item.quantity}) - R$ ${(item.price * item.quantity).toFixed(2)}`
+                  )
+                  .join("\n");
+
+                // Final message
+                const mensagem = `Olá, quero finalizar a compra com os seguintes produtos:\n\n${produtos}\n\n💰 Total: R$ ${total.toFixed(2)}`;
+
+                const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(mensagem)}`;
+
+                Linking.canOpenURL(url).then((supported) => {
+                  if (supported) {
+                    Linking.openURL(url);
+                  } else {
+                    alert(
+                      "Não foi possível abrir o WhatsApp para finalizar a compra. Por gentileza, entre em contato com o desenvolvedor."
+                    );
+                  }
+                });
+              }}
+            >
               <Text className="text-white font-bold text-lg">
                 Finalizar Compra
               </Text>
@@ -83,7 +116,7 @@ export default function CartScreen() {
         </>
       )}
 
-      {/* Footer fixo do app */}
+      {/* Footer */}
       <Footer />
     </View>
   );

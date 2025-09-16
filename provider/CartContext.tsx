@@ -1,10 +1,10 @@
-import React, { createContext, ReactNode, useContext, useState } from "react";
+import React, { createContext, useContext, useState } from "react";
 
 type Product = {
-  quantity: number;
   id: string;
   name: string;
   price: number;
+  quantity: number;
 };
 
 type CartContextType = {
@@ -16,15 +16,32 @@ type CartContextType = {
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
-export const CartProvider = ({ children }: { children: ReactNode }) => {
+export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [cart, setCart] = useState<Product[]>([]);
+  const [favorite, setFavorite] = useState<Product[]>([]);
 
   const addToCart = (product: Product) => {
-    setCart((prev) => [...prev, product]);
+    setCart((prevCart) => {
+      const existing = prevCart.find((item) => item.id === product.id);
+
+      if (existing) {
+        // Quantity update
+        return prevCart.map((item) =>
+          item.id === product.id
+            ? { ...item, quantity: item.quantity + product.quantity }
+            : item
+        );
+      }
+
+      // Adiciona novo
+      return [...prevCart, product];
+    });
   };
 
   const removeFromCart = (id: string) => {
-    setCart((prev) => prev.filter((item) => item.id !== id));
+    setCart((prevCart) => prevCart.filter((item) => item.id !== id));
   };
 
   const clearCart = () => {
@@ -33,7 +50,12 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <CartContext.Provider
-      value={{ cart, addToCart, removeFromCart, clearCart }}
+      value={{
+        cart,
+        addToCart,
+        removeFromCart,
+        clearCart,
+      }}
     >
       {children}
     </CartContext.Provider>
@@ -42,8 +64,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
 export const useCart = () => {
   const context = useContext(CartContext);
-  if (!context) {
-    throw new Error("useCart must be used within a CartProvider");
-  }
+  if (!context)
+    throw new Error("useCart deve ser usado dentro de CartProvider");
   return context;
 };

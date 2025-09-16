@@ -1,6 +1,6 @@
 export const monitor = [
   {
-    id: "1",
+    id: "19",
     name: "Teclado Mecânico Logitech G Pro",
     description: "Teclado compacto, ideal para programadores e gamers.",
     price: 950.0,
@@ -8,7 +8,7 @@ export const monitor = [
     category: "peripherals",
   },
   {
-    id: "2",
+    id: "20",
     name: "Mouse Razer DeathAdder V2",
     description: "Mouse ergonômico com sensor óptico de alta precisão.",
     price: 420.0,
@@ -16,7 +16,7 @@ export const monitor = [
     category: "peripherals",
   },
   {
-    id: "3",
+    id: "21",
     name: "Monitor LG Ultrawide 34''",
     description: "Monitor ultrawide para produtividade com resolução QHD.",
     price: 3200.0,
@@ -24,7 +24,7 @@ export const monitor = [
     category: "peripherals",
   },
   {
-    id: "4",
+    id: "22",
     name: "Webcam Logitech C920",
     description: "Webcam Full HD para reuniões e streaming.",
     price: 600.0,
@@ -32,7 +32,15 @@ export const monitor = [
     category: "peripherals",
   },
   {
-    id: "5",
+    id: "23",
+    name: "Headset HyperX Cloud II",
+    description: "Headset gamer com som surround e microfone removível.",
+    price: 700.0,
+    image: "https://example.com/images/hyperx-cloud.jpg",
+    category: "peripherals",
+  },
+  {
+    id: "24",
     name: "Headset HyperX Cloud II",
     description: "Headset gamer com som surround e microfone removível.",
     price: 700.0,
