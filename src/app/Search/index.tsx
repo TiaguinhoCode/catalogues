@@ -9,11 +9,11 @@ import { ProductList } from "@/components/ProductList";
 import { Feather } from "@expo/vector-icons";
 
 // Bibliotecas
+import { Picker } from "@react-native-picker/picker";
 import React, { useEffect, useState } from "react";
 import { Text, TextInput, View } from "react-native";
 
 // Services
-import { Picker } from "@react-native-picker/picker";
 import { getProducts } from "../../../services/api";
 
 export default function Search() {

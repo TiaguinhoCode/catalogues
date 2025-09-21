@@ -1,4 +1,5 @@
 // Expo
+import { signIn } from "@/services/api";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
@@ -12,6 +13,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function SignIn() {
   const [activeTab, setActiveTab] = useState<"login" | "register">("login");
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [emailInput, setEmailInput] = useState("");
+  const [passwordInput, setPasswordInput] = useState("");
 
   const router = useRouter();
   const fade = useRef(new Animated.Value(0)).current;
@@ -23,6 +26,27 @@ export default function SignIn() {
       useNativeDriver: true,
     }).start();
   }, [fade]);
+
+  const handleSignIn = async () => {
+    try {
+      if (!emailInput || !passwordInput) {
+        alert("Por favor, preencha e-mail e senha.");
+        return;
+      }
+
+      const data = await signIn(emailInput, passwordInput);
+
+      if (data.message) {
+        alert(data.message);
+      } else {
+        alert(data.msg || "Login realizado com sucesso!");
+        router.push("/FormProducts");
+      }
+    } catch (error: any) {
+      console.error("Erro inesperado:", error);
+      alert("Erro inesperado. Tente novamente mais tarde.");
+    }
+  };
 
   return (
     <LinearGradient
@@ -116,6 +140,8 @@ export default function SignIn() {
                       placeholder="empresa@domain.com"
                       placeholderTextColor="#999"
                       className="flex-1 p-3 text-gray-700"
+                      value={emailInput}
+                      onChangeText={setEmailInput}
                     />
                   </View>
                 </Animatable.View>
@@ -136,6 +162,8 @@ export default function SignIn() {
                         placeholderTextColor="#999"
                         secureTextEntry={!showPassword}
                         className="flex-1 p-3 text-gray-700"
+                        value={passwordInput}
+                        onChangeText={setPasswordInput}
                       />
                     </View>
                     <Pressable
@@ -152,7 +180,10 @@ export default function SignIn() {
                 </Animatable.View>
 
                 <Animatable.View animation="fadeInUp" delay={900}>
-                  <Pressable className="mt-6 bg-blue-600 rounded-xl">
+                  <Pressable
+                    className="mt-6 bg-blue-600 rounded-xl"
+                    onPress={handleSignIn}
+                  >
                     <Text className="text-center text-white font-semibold text-lg py-3">
                       Entrar
                     </Text>

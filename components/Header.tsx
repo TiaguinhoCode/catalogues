@@ -15,27 +15,40 @@ export default function Header() {
   const { cart } = useCart();
   const pathname = usePathname(); // Get current route
 
-  const headers: Record<string, string> = {
-    "/": "Cataloguês",
-    "/Search": "Buscar Produto",
-    "/Cart": "Carrinho",
+  const headers: Record<string, { title: string; subTitle?: string }> = {
+    "/Catalog": { title: "Cataloguês", subTitle: "Catálogo de Eletrônicos" },
+    "/FormProducts": {
+      title: "Cadastro de Estoque",
+      subTitle: "Área Administrativa",
+    },
+    "/Search": { title: "Buscar Produto" },
+    "/Cart": { title: "Carrinho" },
   };
 
-  const title = headers[pathname] || "Cataloguês";
+  const { title, subTitle } = headers[pathname] || { title: "Cataloguês" };
 
   // Defines whether to show subtitle and cart
-  const showSubtitle = pathname === "/Catalog";
-  const showCartIcon = pathname !== "/Cart";
+  const showTitleAndSubTitle =
+    pathname === "/Catalog" || pathname === "/FormProducts";
+  const showTitle = pathname === "/Cart" || pathname === "/Search";
+  const showCartIcon = pathname !== "/Cart" && pathname !== "/FormProducts";
 
   return (
     <View className="flex-row justify-between items-center p-5 bg-white shadow-md">
+      {/* Title and Subtitle*/}
+      {showTitleAndSubTitle && (
+        <View className="flex gap-1">
+          <Text className="text-3xl font-bold text-gray-800">{title}</Text>
+          <Text className="text-gray-500 text-sm">{subTitle}</Text>
+        </View>
+      )}
+
       {/* Title */}
-      <View className="flex gap-1">
-        <Text className="text-3xl font-bold text-gray-800">{title}</Text>
-        {showSubtitle && (
-          <Text className="text-gray-500 text-sm">Catálogo de Eletrônicos</Text>
-        )}
-      </View>
+      {showTitle && (
+        <View className="flex gap-1">
+          <Text className="text-3xl font-bold text-gray-800">{title}</Text>
+        </View>
+      )}
 
       {/* Cart Button */}
       {showCartIcon && (

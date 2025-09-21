@@ -57,7 +57,7 @@ export default function Footer() {
               className="flex-row items-center py-3"
               onPress={() => console.log("Ver perfil")}
             >
-              <AntDesign name="user" size={20} color="black" />
+              <Feather name="user" size={20} color="black" />
               <Text className="ml-3 text-lg">Perfil</Text>
             </TouchableOpacity>
 
