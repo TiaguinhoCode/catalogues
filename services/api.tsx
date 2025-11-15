@@ -30,23 +30,32 @@ export const signIn = async (email: string, password: string) => {
 // Brands
 export const getBrands = async () => {
   const response = await api.get("/brands/");
+  if (!response) throw new Error("Erro ao buscar brands");
+
   return response.data; // array de marcas
 };
 
 // Categories
 export const getCategories = async () => {
   const response = await api.get("/categories/");
+  if (!response) throw new Error("Erro ao buscar categorias");
   return response.data; // array de categorias
 };
 
 // Stocks
-export const getStocks = async () => {
-  const response = await api.get("/stocks/");
-  return response.data; // array de almoxarifados
+export const getWarehouses = async (token: string) => {
+  const response = await api.get("/warehouses", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!response) throw new Error("Erro ao buscar estoque");
+
+  return response.data.warehouses; // array de almoxarifados
 };
 
 // Form Product
 export const formProducts = async (formData: any) => {
-  const response = await axios.post("/stocks/", formData);
+  const response = await api.post("/stocks", formData);
   return response.data; // aqui deve vir { success: true, message: "..."}
 };

@@ -44,7 +44,7 @@ export default function ProductDetail() {
         const mapped = productsArray.map((item: any) => ({
           id: item.id,
           name: item.name,
-          url_imagem: item.url_imagem,
+          url_imagem: item.banners?.[0]?.url_imagem || "",
           price: item.price,
           description: item.description,
           stock: item.stock || "Em estoque",

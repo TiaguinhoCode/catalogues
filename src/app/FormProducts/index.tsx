@@ -7,10 +7,11 @@ import {
   formProducts,
   getBrands,
   getCategories,
-  getStocks,
+  getWarehouses,
 } from "@/services/api";
 
 // Bibliotecas
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Picker } from "@react-native-picker/picker";
 import React, { useEffect, useState } from "react";
 import {
@@ -35,7 +36,7 @@ type FormState = {
   description: string;
   brand_id: string;
   category_id: string;
-  stock_id: string;
+  warehouse_id: string;
 };
 
 export default function FormProducts() {
@@ -51,57 +52,53 @@ export default function FormProducts() {
     description: "",
     brand_id: "",
     category_id: "",
-    stock_id: "",
+    warehouse_id: "",
   });
 
   const [loading, setLoading] = useState(false);
-  const [brands, setBrands] = useState<{ id: string; name: string }[]>([]);
-  const [categories, setCategories] = useState<{ id: string; name: string }[]>(
-    []
-  );
-  const [stocks, setStocks] = useState<{ id: string; name: string }[]>([]);
+  const [brands, setBrands] = useState<any[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
+  const [warehouses, setWarehouses] = useState<any[]>([]);
+
+  // Change handler
+  const handleChange = (field: string, value: any) => {
+    setForm((prev) => ({ ...prev, [field]: value }));
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [brandsData, categoriesData, stocksData] = await Promise.all([
+        const [brandsData, categoriesData] = await Promise.all([
           getBrands(),
           getCategories(),
-          getStocks(),
         ]);
 
-        const brandsList = Array.isArray(brandsData.brands)
-          ? brandsData.brands
-          : [];
-        const categoriesList = Array.isArray(categoriesData.categories)
-          ? categoriesData.categories
-          : [];
-        const stocksList = Array.isArray(stocksData.stocks)
-          ? stocksData.stocks
-          : [];
+        setBrands(Array.isArray(brandsData.brands) ? brandsData.brands : []);
+        setCategories(
+          Array.isArray(categoriesData.categories)
+            ? categoriesData.categories
+            : []
+        );
 
-        setBrands(brandsList);
-        setCategories(categoriesList);
-        setStocks(stocksList);
+        const token = await AsyncStorage.getItem("token");
+        if (!token) {
+          Alert.alert("Erro", "Token de autenticação não encontrado.");
+          return;
+        }
 
-        console.log("BRANDS:", brandsList);
-        console.log("CATEGORIES:", categoriesList);
-        console.log("STOCKS:", stocksList);
+        const warehouseData = await getWarehouses(token);
+        setWarehouses(Array.isArray(warehouseData) ? warehouseData : []);
       } catch (error) {
         console.log("Erro ao carregar dados:", error);
         Alert.alert("Erro", "Não foi possível carregar os dados de seleção.");
         setBrands([]);
         setCategories([]);
-        setStocks([]);
+        setWarehouses([]);
       }
     };
 
     fetchData();
   }, []);
-
-  // Atualizar valor do formulário
-  const handleChange = (key: keyof FormState, value: string) =>
-    setForm((prev) => ({ ...prev, [key]: value }));
 
   // Validação
   const validate = () => {
@@ -130,6 +127,7 @@ export default function FormProducts() {
     try {
       const data = await formProducts(form);
 
+      console.log("DATA:", data);
       if (data) {
         Alert.alert("Sucesso", "Produto cadastrado com sucesso!");
         setForm({
@@ -144,13 +142,10 @@ export default function FormProducts() {
           description: "",
           brand_id: "",
           category_id: "",
-          stock_id: "",
+          warehouse_id: "",
         });
       } else {
-        Alert.alert(
-          "Erro",
-          data?.message || "Não foi possível cadastrar o produto."
-        );
+        Alert.alert("Erro", data?.message);
       }
     } catch (err) {
       Alert.alert(
@@ -304,16 +299,16 @@ export default function FormProducts() {
           </Text>
           <View className="bg-white border border-gray-200 rounded-lg">
             <Picker
-              selectedValue={form.stock_id}
-              onValueChange={(value) => handleChange("stock_id", value)}
+              selectedValue={form.warehouse_id}
+              onValueChange={(value) => handleChange("warehouse_id", value)}
             >
               <Picker.Item label="Selecione o almoxarifado" value="" />
-              {Array.isArray(stocks) &&
-                stocks.map((stock) => (
+              {Array.isArray(warehouses) &&
+                warehouses.map((warehouses) => (
                   <Picker.Item
-                    key={stock.id}
-                    label={stock.name}
-                    value={stock.id}
+                    key={warehouses.id}
+                    label={warehouses.name}
+                    value={warehouses.id}
                   />
                 ))}
             </Picker>

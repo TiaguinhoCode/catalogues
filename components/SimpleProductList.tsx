@@ -23,6 +23,8 @@ export const SimpleProductList: React.FC<SimpleProductListProps> = ({
 }) => {
   const { cart, addToCart } = useCart();
 
+  const imageUrl = item.url_imagem || item.banners?.[0]?.url_imagem;
+
   return (
     <TouchableOpacity
       style={style}
@@ -37,14 +39,14 @@ export const SimpleProductList: React.FC<SimpleProductListProps> = ({
       <View>
         {/* Product Image */}
         <Image
-          source={{ uri: item.url_imagem }}
+          source={{ uri: imageUrl }}
           className="w-[150px] h-[150px] self-center"
           resizeMode="contain" // mantém proporção da imagem
         />
 
         {/* Product Name */}
         <Text className="text-lg font-bold text-center mb-1 text-gray-800">
-          {item.name}
+          {item.name.length > 20 ? item.name.slice(0, 20) + "..." : item.name}
         </Text>
 
         {/* Price */}

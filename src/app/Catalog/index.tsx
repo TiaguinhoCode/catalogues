@@ -18,8 +18,9 @@ export default function Catalog() {
         const data = await getProducts();
         const mapped = (data.products || data).map((item: any) => ({
           id: item.id,
-          name: item.name,
-          url_imagem: item.url_imagem,
+          name:
+            item.name.length > 20 ? item.name.slice(0, 20) + "..." : item.name,
+          url_imagem: item.banners?.[0]?.url_imagem || "",
           price: item.price,
           category: item.category,
         }));

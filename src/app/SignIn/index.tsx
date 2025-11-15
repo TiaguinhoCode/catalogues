@@ -5,6 +5,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 
 // React
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useRef, useState } from "react";
 import { Animated, Pressable, Text, TextInput, View } from "react-native";
 import * as Animatable from "react-native-animatable";
@@ -39,6 +40,10 @@ export default function SignIn() {
       if (data.message) {
         alert(data.message);
       } else {
+        if (data.token) {
+          await AsyncStorage.setItem("token", data.token);
+          //console.log("Token salvo com sucesso:", data.token);
+        }
         alert(data.msg || "Login realizado com sucesso!");
         router.push("/FormProducts");
       }
