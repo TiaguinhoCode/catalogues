@@ -21,6 +21,7 @@ export default function Header() {
       title: "Cadastro de Estoque",
       subTitle: "Área Administrativa",
     },
+    "/ProductDetail": { title: "Informações" },
     "/Search": { title: "Buscar Produto" },
     "/Cart": { title: "Carrinho" },
   };
@@ -30,7 +31,10 @@ export default function Header() {
   // Defines whether to show subtitle and cart
   const showTitleAndSubTitle =
     pathname === "/Catalog" || pathname === "/FormProducts";
-  const showTitle = pathname === "/Cart" || pathname === "/Search";
+  const showTitle =
+    pathname === "/Cart" ||
+    pathname === "/Search" ||
+    pathname === "/ProductDetail";
   const showCartIcon = pathname !== "/Cart" && pathname !== "/FormProducts";
 
   return (

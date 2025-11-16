@@ -28,15 +28,16 @@ type FormState = {
   name: string;
   product_code: string;
   sales_unit: string;
-  current_quantity: string;
-  minimium_quantity: string;
-  price: string;
-  purchase_price: string;
-  cost_price: string;
+  current_quantity: number;
+  minimium_quantity: number;
+  maximum_quantity: number;
+  price: number;
+  purchase_price: number;
+  cost_price: number;
   description: string;
   brand_id: string;
   category_id: string;
-  warehouse_id: string;
+  stock_id: string;
 };
 
 export default function FormProducts() {
@@ -44,15 +45,16 @@ export default function FormProducts() {
     name: "",
     product_code: "",
     sales_unit: "",
-    current_quantity: "",
-    minimium_quantity: "",
-    price: "",
-    purchase_price: "",
-    cost_price: "",
+    current_quantity: 0,
+    minimium_quantity: 0,
+    maximum_quantity: 0,
+    price: 0,
+    purchase_price: 0,
+    cost_price: 0,
     description: "",
     brand_id: "",
     category_id: "",
-    warehouse_id: "",
+    stock_id: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -106,9 +108,9 @@ export default function FormProducts() {
       !form.name.trim() ||
       !form.product_code.trim() ||
       !form.sales_unit.trim() ||
-      !form.current_quantity.trim() ||
-      !form.price.trim() ||
-      !form.cost_price.trim()
+      !form.current_quantity ||
+      !form.price ||
+      !form.cost_price
     ) {
       Alert.alert(
         "Atenção",
@@ -134,24 +136,25 @@ export default function FormProducts() {
           name: "",
           product_code: "",
           sales_unit: "",
-          current_quantity: "",
-          minimium_quantity: "",
-          price: "",
-          purchase_price: "",
-          cost_price: "",
+          current_quantity: 0,
+          minimium_quantity: 0,
+          maximum_quantity: 0,
+          price: 0,
+          purchase_price: 0,
+          cost_price: 0,
           description: "",
           brand_id: "",
           category_id: "",
-          warehouse_id: "",
+          stock_id: "",
         });
       } else {
         Alert.alert("Erro", data?.message);
+        console.log("SETORM:", setForm);
       }
-    } catch (err) {
-      Alert.alert(
-        "Erro",
-        "Não foi possível cadastrar o produto. Tente novamente."
-      );
+    } catch (err: any) {
+      console.log("ERR:", err);
+
+      Alert.alert("Erro", err?.response?.data?.message || err?.message);
     } finally {
       setLoading(false);
     }
@@ -228,9 +231,12 @@ export default function FormProducts() {
             <Text className="text-red-500">*</Text>
           </Text>
           <TextInput
-            value={form.current_quantity}
+            value={form.current_quantity.toString()}
             placeholder="20"
-            onChangeText={(t) => handleChange("current_quantity", t)}
+            onChangeText={(t) =>
+              handleChange("current_quantity", parseFloat(t) || 0)
+            }
+            keyboardType="numeric"
             className="bg-white px-4 text-gray-600 py-3 rounded-lg border border-gray-200"
           />
         </View>
@@ -242,9 +248,29 @@ export default function FormProducts() {
             <Text className="text-red-500">*</Text>
           </Text>
           <TextInput
-            value={form.minimium_quantity}
+            value={form.minimium_quantity.toString()}
             placeholder="10"
-            onChangeText={(t) => handleChange("minimium_quantity", t)}
+            onChangeText={(t) =>
+              handleChange("minimium_quantity", parseFloat(t) || 0)
+            }
+            keyboardType="numeric"
+            className="bg-white px-4 text-gray-600 py-3 rounded-lg border border-gray-200"
+          />
+        </View>
+
+        {/* Maximum Quantity */}
+        <View className="mb-4">
+          <Text className="text-black font-bold mb-1">
+            Quantidade Máxima:
+            <Text className="text-red-500">*</Text>
+          </Text>
+          <TextInput
+            value={form.maximum_quantity.toString()}
+            placeholder="10"
+            onChangeText={(t) =>
+              handleChange("maximum_quantity", parseFloat(t) || 0)
+            }
+            keyboardType="numeric"
             className="bg-white px-4 text-gray-600 py-3 rounded-lg border border-gray-200"
           />
         </View>
@@ -256,9 +282,10 @@ export default function FormProducts() {
             <Text className="text-red-500">*</Text>
           </Text>
           <TextInput
-            value={form.price}
+            value={form.price.toString()}
             placeholder="R$: 80,00"
-            onChangeText={(t) => handleChange("price", t)}
+            onChangeText={(t) => handleChange("price", parseFloat(t) || 0)}
+            keyboardType="numeric"
             className="bg-white px-4 text-gray-600 py-3 rounded-lg border border-gray-200"
           />
         </View>
@@ -270,9 +297,12 @@ export default function FormProducts() {
             <Text className="text-red-500">*</Text>
           </Text>
           <TextInput
-            value={form.purchase_price}
+            value={form.purchase_price.toString()}
             placeholder="R$: 80,00"
-            onChangeText={(t) => handleChange("purchase_price", t)}
+            onChangeText={(t) =>
+              handleChange("purchase_price", parseFloat(t) || 0)
+            }
+            keyboardType="numeric"
             className="bg-white px-4 text-gray-600 py-3 rounded-lg border border-gray-200"
           />
         </View>
@@ -284,9 +314,10 @@ export default function FormProducts() {
             <Text className="text-red-500">*</Text>
           </Text>
           <TextInput
-            value={form.cost_price}
+            value={form.cost_price.toString()}
             placeholder="R$: 80,00"
-            onChangeText={(t) => handleChange("cost_price", t)}
+            onChangeText={(t) => handleChange("cost_price", parseFloat(t) || 0)}
+            keyboardType="numeric"
             className="bg-white px-4 text-gray-600 py-3 rounded-lg border border-gray-200"
           />
         </View>
@@ -299,8 +330,8 @@ export default function FormProducts() {
           </Text>
           <View className="bg-white border border-gray-200 rounded-lg">
             <Picker
-              selectedValue={form.warehouse_id}
-              onValueChange={(value) => handleChange("warehouse_id", value)}
+              selectedValue={form.stock_id}
+              onValueChange={(value) => handleChange("stock_id", value)}
             >
               <Picker.Item label="Selecione o almoxarifado" value="" />
               {Array.isArray(warehouses) &&

@@ -1,11 +1,19 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://catalogsapi.vercel.app/v1",
-  headers: {
-    Authorization:
-      "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImI4ZjRkMThhLTJlNjgtNDllOC1iNDA4LTkxZTJiNDU2ZjAyNyIsIm5hbWUiOiJMb2dpY0h1YiIsInN1cm5hbWUiOiJTdXBvcnRlIiwicGhvbmUiOiIoODUpIDk4NzgwLTU1OTIiLCJlbWFpbCI6InRpYWdvcmFmYWVsMDE5QGdtYWlsLmNvbSIsImNlcCI6IjYwMzEwLTM0MCIsInBob3RvIjpudWxsLCJpc19hY3RpdmUiOnRydWUsImNoZWNrZWQiOnRydWUsImVudGVycHJpc2UiOm51bGwsInJ1bGUiOnsiaWQiOiJlNTMyYWIwYy01MTEyLTQ5ZTItYjlkNC1lZTBjYzUwMGI5MzEiLCJuYW1lIjoiU3Vwb3J0ZSBkbyBTaXN0ZW1hIn0sInZhbGlkYXRpb25faWQiOiIyNGRiZTAzNy0zYTQyLTQ1ZWYtYWUxYi1hMmYxMDM3ODNjNTkiLCJjcmVhdGVkX2F0IjoiMjAyNS0wOC0wNVQxMjoyMzoxNS45MjFaIiwidXBkYXRlZF9hdCI6IjIwMjUtMDgtMDVUMTc6MTM6MDEuNDgyWiIsImlhdCI6MTc1ODQ4NTg0NCwiZXhwIjoxNzYxMDc3ODQ0fQ.6IpTtk5u1eP_Y0sXOpNpL62RAmqdhw464k5CNEUO7Ug",
-  },
+  baseURL: "https://kamala-driveable-overfavorably.ngrok-free.dev/v1",
+});
+
+// Interceptor para colocar o token
+api.interceptors.request.use(async (config) => {
+  const token = await AsyncStorage.getItem("token");
+
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+
+  return config;
 });
 
 // Produtos
@@ -56,6 +64,13 @@ export const getWarehouses = async (token: string) => {
 
 // Form Product
 export const formProducts = async (formData: any) => {
-  const response = await api.post("/stocks", formData);
-  return response.data; // aqui deve vir { success: true, message: "..."}
+  console.log("FORMDATA:", JSON.stringify(formData, null, 2));
+  try {
+    const response = await api.post("/stocks", formData);
+    console.log("RESPONSE:", response.data);
+    return response.data;
+  } catch (err: any) {
+    console.log("ERROR API:", err?.response?.data || err);
+    throw err;
+  }
 };
