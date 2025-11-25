@@ -75,12 +75,12 @@ export default function ProductDetail() {
     );
   }
 
-  const handleAddToCart = () => {
-    addToCart({ ...item, quantity });
-  };
+  // const handleAddToCart = () => {
+  //   addToCart({ ...item, quantity });
+  // };
 
   const relatedProducts = products.filter((p) => p.id !== item.id);
-
+  console.log("Quantidade: ", quantity);
   return (
     <View className="flex-1 bg-gray-50">
       <Header />
@@ -182,6 +182,7 @@ export default function ProductDetail() {
           item={item}
           addToCart={addToCart}
           quantity={quantity}
+          onAdded={() => setQuantity((q) => q + 1)}
         />
       </View>
 

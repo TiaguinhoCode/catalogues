@@ -18,7 +18,7 @@ api.interceptors.request.use(async (config) => {
 
 // Produtos
 export const getProducts = async () => {
-  const response = await api.get("/products/");
+  const response = await api.get("/products?limit=100");
   return response.data;
 };
 

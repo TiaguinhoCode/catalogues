@@ -4,12 +4,14 @@ type Product = {
   id: string;
   name: string;
   price: number;
-  quantity: number;
+  quantity?: number;
 };
 
+type CartItem = Product & { quantity: number };
+
 type CartContextType = {
-  cart: Product[];
-  addToCart: (product: Product) => void;
+  cart: CartItem[];
+  addToCart: (product: Product, quantity?: number) => void;
   removeFromCart: (id: string) => void;
   clearCart: () => void;
 };
@@ -19,24 +21,22 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [cart, setCart] = useState<Product[]>([]);
-  const [favorite, setFavorite] = useState<Product[]>([]);
+  const [cart, setCart] = useState<CartItem[]>([]);
+  // const [favorite, setFavorite] = useState<Product[]>([]);
 
-  const addToCart = (product: Product) => {
+  const addToCart = (product: Product, quantity = 1) => {
     setCart((prevCart) => {
       const existing = prevCart.find((item) => item.id === product.id);
 
       if (existing) {
-        // Quantity update
         return prevCart.map((item) =>
           item.id === product.id
-            ? { ...item, quantity: item.quantity + product.quantity }
+            ? { ...item, quantity: item.quantity + quantity }
             : item
         );
       }
 
-      // Adiciona novo
-      return [...prevCart, product];
+      return [...prevCart, { ...product, quantity }];
     });
   };
 
